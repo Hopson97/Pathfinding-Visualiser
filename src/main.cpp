@@ -47,6 +47,15 @@ struct Grid {
         }
         grid[x + y * WIDTH] = state;
     }
+
+    void reset_path_finding()
+    {
+        for (auto& quad : grid) {
+            if (quad == State::Path || quad == State::Visited) {
+                quad = State::Empty;
+            }
+        }
+    }
 };
 
 enum class Tool {
@@ -105,6 +114,10 @@ PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
     while (!queue.empty() and !found) {
         auto current = queue.front();
         queue.pop_front();
+        if (current == finish) {
+            found = true;
+            break;
+        }
         for (int i = 0; i < 4; i++) {
             auto next = current + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
             if (came_from.find(next) == came_from.end() &&
@@ -119,6 +132,10 @@ PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
                 break;
             }
         }
+    }
+
+    if (!found) {
+        return result;
     }
 
     auto current = finish;
@@ -187,14 +204,9 @@ int main()
                                     grid.set_tile(x, y, State::End);
                                     finish = {x, y};
                                     break;
-                                case Tool::Wall:
-                                    grid.set_tile(x, y, State::Blocked);
+                                default:
                                     break;
                             }
-                            break;
-
-                        case sf::Mouse::Right:
-                            grid.set_tile(x, y, State::Empty);
                             break;
 
                         default:
@@ -204,6 +216,15 @@ int main()
                 default:
                     break;
             }
+        }
+
+        if (tool == Tool::Wall && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            grid.set_tile(sf::Mouse::getPosition(window).x / TILE,
+                          sf::Mouse::getPosition(window).y / TILE, State::Blocked);
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            grid.set_tile(sf::Mouse::getPosition(window).x / TILE,
+                          sf::Mouse::getPosition(window).y / TILE, State::Empty);
         }
 
         ImGui::SFML::Update(window, updateClock.restart());
@@ -259,7 +280,7 @@ int main()
                         shape.setFillColor(sf::Color::Black);
                         break;
                     case State::Visited:
-                        shape.setFillColor(sf::Color::Blue);
+                        shape.setFillColor({0, 100, 200});
                         break;
                     case State::Path:
                         shape.setFillColor(sf::Color::Green);
