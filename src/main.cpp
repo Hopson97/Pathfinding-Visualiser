@@ -25,7 +25,7 @@ enum class State {
 struct Grid {
     std::array<State, WIDTH * HEIGHT> grid{State::Empty};
 
-    State get_tile(int x, int y)
+    State get_tile(int x, int y) const
     {
         if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
             return State::Blocked;
@@ -33,7 +33,20 @@ struct Grid {
         return grid[x + y * WIDTH];
     }
 
-    void set_tile(int x, int y, State state) { grid[x + y * WIDTH] = state; }
+    void set_tile(int x, int y, State state)
+
+    {
+        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
+            return;
+        }
+
+        // prevent setting tile if it is a start or end tile being set to visisted
+        if (state == State::Visited &&
+            (grid[x + y * WIDTH] == State::Start || grid[x + y * WIDTH] == State::End)) {
+            return;
+        }
+        grid[x + y * WIDTH] = state;
+    }
 };
 
 enum class Tool {
@@ -70,15 +83,22 @@ std::ostream& operator<<(std::ostream& o, const sf::Vector2i& v)
 const int X_OFFSET[] = {-1, 0, 1, 0};
 const int Y_OFFSET[] = {0, 1, 0, -1};
 
-std::vector<sf::Vector2i> bfs_pathfind(Grid& grid, const sf::Vector2i& start,
-                                       const sf::Vector2i& finish)
+struct PathFindResult {
+    std::deque<sf::Vector2i> visited;
+    std::deque<sf::Vector2i> path;
+};
+
+PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
+                            const sf::Vector2i& finish)
 {
-    std::cout << "Finding a path from " << start << " TO " << finish << std::endl;
     std::deque<sf::Vector2i> queue;
     std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2> came_from;
 
+    // For visualisation
+    PathFindResult result;
+    result.visited.push_back(start);
+
     queue.push_back(start);
-    grid.set_tile(start.x, start.y, State::Visited);
 
     bool found = false;
 
@@ -90,10 +110,9 @@ std::vector<sf::Vector2i> bfs_pathfind(Grid& grid, const sf::Vector2i& start,
             if (came_from.find(next) == came_from.end() &&
                 (grid.get_tile(next.x, next.y) == State::Empty ||
                  grid.get_tile(next.x, next.y) == State::End)) {
-                grid.set_tile(next.x, next.y, State::Visited);
+                result.visited.push_back(next);
                 queue.push_back(next);
                 came_from[next] = current;
-                std::cout << "Pushing " << next << " = " << current << "\n";
             }
             if (next == finish) {
                 found = true;
@@ -102,25 +121,18 @@ std::vector<sf::Vector2i> bfs_pathfind(Grid& grid, const sf::Vector2i& start,
         }
     }
 
-    for (auto& [to, from] : came_from) {
-        std::cout << "To " << to << "  From: " << from << "\n";
-    }
-
     auto current = finish;
-    std::vector<sf::Vector2i> path;
     while (start != current) {
-        std::cout << "Current: " << current << std::endl;
-        path.push_back(current);
+        result.path.push_back(current);
         current = came_from.at(current);
-        grid.set_tile(current.x, current.y, State::Path);
     }
-    return path;
+    return result;
 }
 
 int main()
 {
     sf::RenderWindow window({1600, 900}, "Pathfinding");
-    window.setFramerateLimit(60);
+    // window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
 
     ImGui::SFML::Init(window);
@@ -136,6 +148,8 @@ int main()
     sf::Vector2i finish = {-1, -1};
 
     Keyboard keyboard;
+
+    PathFindResult path_find_result;
 
     Grid grid;
     sf::Clock updateClock;
@@ -209,13 +223,25 @@ int main()
             }
 
             if (ImGui::Button("Do BFS Path Find")) {
-                bfs_pathfind(grid, start, finish);
+                path_find_result = bfs_pathfind(grid, start, finish);
             }
 
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
             ImGui::Text("Current Tool: %s", tool_to_string(tool));
 
             ImGui::End();
+        }
+
+        auto& pfr = path_find_result;
+        if (!pfr.visited.empty()) {
+            auto current = pfr.visited.front();
+            pfr.visited.pop_front();
+            grid.set_tile(current.x, current.y, State::Visited);
+        }
+        else if (!pfr.path.empty()) {
+            auto current = pfr.path.back();
+            pfr.path.pop_back();
+            grid.set_tile(current.x, current.y, State::Path);
         }
 
         window.clear();
@@ -227,7 +253,7 @@ int main()
                 auto tile = grid.get_tile(x, y);
                 switch (tile) {
                     case State::Empty:
-                        shape.setFillColor(sf::Color::White);
+                        shape.setFillColor({155, 155, 155});
                         break;
                     case State::Blocked:
                         shape.setFillColor(sf::Color::Black);
