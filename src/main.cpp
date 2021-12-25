@@ -2,8 +2,10 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <array>
+#include <deque>
 #include <imgui_sfml/imgui-SFML.h>
 #include <imgui_sfml/imgui.h>
+#include <iostream>
 #include <numeric>
 #include <queue>
 
@@ -52,6 +54,68 @@ const char* tool_to_string(Tool tool)
     }
     return "";
 }
+struct HashVec2 {
+    size_t operator()(const sf::Vector2i& v) const
+    {
+        return std::hash<int>()(v.x) ^ std::hash<int>()(v.y);
+    }
+};
+
+// print sf::vector2i (x, y) to std::cout/std::ostream
+std::ostream& operator<<(std::ostream& o, const sf::Vector2i& v)
+{
+    return o << v.x << ", " << v.y;
+}
+
+const int X_OFFSET[] = {-1, 0, 1, 0};
+const int Y_OFFSET[] = {0, 1, 0, -1};
+
+std::vector<sf::Vector2i> bfs_pathfind(Grid& grid, const sf::Vector2i& start,
+                                       const sf::Vector2i& finish)
+{
+    std::cout << "Finding a path from " << start << " TO " << finish << std::endl;
+    std::deque<sf::Vector2i> queue;
+    std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2> came_from;
+
+    queue.push_back(start);
+    grid.set_tile(start.x, start.y, State::Visited);
+
+    bool found = false;
+
+    while (!queue.empty() and !found) {
+        auto current = queue.front();
+        queue.pop_front();
+        for (int i = 0; i < 4; i++) {
+            auto next = current + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
+            if (came_from.find(next) == came_from.end() &&
+                (grid.get_tile(next.x, next.y) == State::Empty ||
+                 grid.get_tile(next.x, next.y) == State::End)) {
+                grid.set_tile(next.x, next.y, State::Visited);
+                queue.push_back(next);
+                came_from[next] = current;
+                std::cout << "Pushing " << next << " = " << current << "\n";
+            }
+            if (next == finish) {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    for (auto& [to, from] : came_from) {
+        std::cout << "To " << to << "  From: " << from << "\n";
+    }
+
+    auto current = finish;
+    std::vector<sf::Vector2i> path;
+    while (start != current) {
+        std::cout << "Current: " << current << std::endl;
+        path.push_back(current);
+        current = came_from.at(current);
+        grid.set_tile(current.x, current.y, State::Path);
+    }
+    return path;
+}
 
 int main()
 {
@@ -69,7 +133,7 @@ int main()
 
     Tool tool = Tool::Wall;
     sf::Vector2i start = {-1, -1};
-    sf::Vector2i end = {-1, -1};
+    sf::Vector2i finish = {-1, -1};
 
     Keyboard keyboard;
 
@@ -103,11 +167,11 @@ int main()
                                     start = {x, y};
                                     break;
                                 case Tool::Finish:
-                                    if (end.x != -1) {
-                                        grid.set_tile(end.x, end.y, State::Empty);
+                                    if (finish.x != -1) {
+                                        grid.set_tile(finish.x, finish.y, State::Empty);
                                     }
                                     grid.set_tile(x, y, State::End);
-                                    end = {x, y};
+                                    finish = {x, y};
                                     break;
                                 case Tool::Wall:
                                     grid.set_tile(x, y, State::Blocked);
@@ -142,6 +206,10 @@ int main()
             }
             if (ImGui::Button("Wall")) {
                 tool = Tool::Wall;
+            }
+
+            if (ImGui::Button("Do BFS Path Find")) {
+                bfs_pathfind(grid, start, finish);
             }
 
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
