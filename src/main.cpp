@@ -135,6 +135,10 @@ int main()
                 grid.reset_path_finding();
                 path_find_result = bfs_pathfind(grid, start, finish);
             }
+            if (ImGui::Button("Dijkstra's Algorithm")) {
+                grid.reset_path_finding();
+                path_find_result = dijkstra_pathfind(grid, start, finish);
+            }
 
             ImGui::Separator();
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);

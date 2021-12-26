@@ -25,3 +25,6 @@ struct PathFindResult {
 
 PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
                             const sf::Vector2i& finish);
+
+PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
+                                 const sf::Vector2i& finish);
