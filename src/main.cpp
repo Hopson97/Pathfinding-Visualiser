@@ -1,62 +1,12 @@
 #include "Keyboard.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <array>
-#include <deque>
 #include <imgui_sfml/imgui-SFML.h>
 #include <imgui_sfml/imgui.h>
-#include <iostream>
 #include <numeric>
-#include <queue>
 
-constexpr int TILE = 20;
-constexpr int WIDTH = 1600 / TILE;
-constexpr int HEIGHT = 900 / TILE;
-
-enum class State {
-    Empty,
-    Blocked,
-    Visited,
-    Path,
-    Start,
-    End,
-};
-
-struct Grid {
-    std::array<State, WIDTH * HEIGHT> grid{State::Empty};
-
-    State get_tile(int x, int y) const
-    {
-        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
-            return State::Blocked;
-        }
-        return grid[x + y * WIDTH];
-    }
-
-    void set_tile(int x, int y, State state)
-
-    {
-        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
-            return;
-        }
-
-        // prevent setting tile if it is a start or end tile being set to visisted
-        if (state == State::Visited &&
-            (grid[x + y * WIDTH] == State::Start || grid[x + y * WIDTH] == State::End)) {
-            return;
-        }
-        grid[x + y * WIDTH] = state;
-    }
-
-    void reset_path_finding()
-    {
-        for (auto& quad : grid) {
-            if (quad == State::Path || quad == State::Visited) {
-                quad = State::Empty;
-            }
-        }
-    }
-};
+#include "Grid.h"
+#include "PathFindingAlgorithm.h"
 
 enum class Tool {
     Start,
@@ -75,75 +25,6 @@ const char* tool_to_string(Tool tool)
             return "Wall";
     }
     return "";
-}
-struct HashVec2 {
-    size_t operator()(const sf::Vector2i& v) const
-    {
-        return std::hash<int>()(v.x) ^ std::hash<int>()(v.y);
-    }
-};
-
-// print sf::vector2i (x, y) to std::cout/std::ostream
-std::ostream& operator<<(std::ostream& o, const sf::Vector2i& v)
-{
-    return o << v.x << ", " << v.y;
-}
-
-const int X_OFFSET[] = {-1, 0, 1, 0};
-const int Y_OFFSET[] = {0, 1, 0, -1};
-
-struct PathFindResult {
-    std::deque<sf::Vector2i> visited;
-    std::deque<sf::Vector2i> path;
-};
-
-PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
-                            const sf::Vector2i& finish)
-{
-    std::deque<sf::Vector2i> queue;
-    std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2> came_from;
-
-    // For visualisation
-    PathFindResult result;
-    result.visited.push_back(start);
-
-    queue.push_back(start);
-
-    bool found = false;
-
-    while (!queue.empty() and !found) {
-        auto current = queue.front();
-        queue.pop_front();
-        if (current == finish) {
-            found = true;
-            break;
-        }
-        for (int i = 0; i < 4; i++) {
-            auto next = current + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
-            if (came_from.find(next) == came_from.end() &&
-                (grid.get_tile(next.x, next.y) == State::Empty ||
-                 grid.get_tile(next.x, next.y) == State::End)) {
-                result.visited.push_back(next);
-                queue.push_back(next);
-                came_from[next] = current;
-            }
-            if (next == finish) {
-                found = true;
-                break;
-            }
-        }
-    }
-
-    if (!found) {
-        return result;
-    }
-
-    auto current = finish;
-    while (start != current) {
-        result.path.push_back(current);
-        current = came_from.at(current);
-    }
-    return result;
 }
 
 int main()
