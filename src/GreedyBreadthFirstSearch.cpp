@@ -5,25 +5,6 @@
 #include <queue>
 #include <unordered_map>
 
-struct Node {
-    sf::Vector2i pos;
-    int cost;
-};
-
-struct NodeCompare {
-    bool operator()(const Node& lhs, const Node& rhs) const
-    {
-        return lhs.cost > rhs.cost;
-    }
-};
-
-int heuristic(const sf::Vector2i& start, const sf::Vector2i& end)
-{
-    int dx = abs(start.x - end.x);
-    int dy = abs(start.y - end.y);
-    return dx + dy;
-}
-
 PathFindResult greedy_bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
                                    const sf::Vector2i& finish)
 {

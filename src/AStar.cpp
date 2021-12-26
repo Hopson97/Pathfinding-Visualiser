@@ -1,11 +1,12 @@
 #include "PathFindingAlgorithm.h"
 
 #include "Grid.h"
+#include <cmath>
 #include <queue>
 #include <unordered_map>
 
-PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
-                                 const sf::Vector2i& finish)
+PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
+                               const sf::Vector2i& finish)
 {
     std::priority_queue<Node, std::vector<Node>, NodeCompare> queue;
     std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2> came_from;
@@ -39,7 +40,7 @@ PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
 
                 cost_so_far[next] = cost;
                 result.visited.push_back(next);
-                queue.push({next, cost});
+                queue.push({next, cost + heuristic(next, finish)});
                 came_from[next] = current.pos;
             }
             if (next == finish) {

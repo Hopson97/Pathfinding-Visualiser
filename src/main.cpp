@@ -49,6 +49,9 @@ int main()
 
     PathFindResult path_find_result;
 
+    int nodes_visited = 0;
+    int path_length = 0;
+
     Grid grid;
     sf::Clock updateClock;
     while (window.isOpen()) {
@@ -133,18 +136,35 @@ int main()
             ImGui::Text("Pathfinding Algorithm");
             if (ImGui::Button("Breadth First Search")) {
                 grid.reset_path_finding();
+                nodes_visited = 0;
+                path_length = 0;
                 path_find_result = bfs_pathfind(grid, start, finish);
             }
-            if (ImGui::Button("Dijkstra's Algorithm")) {
+            ImGui::SameLine();
+            if (ImGui::Button("Dijkstra's")) {
                 grid.reset_path_finding();
+                nodes_visited = 0;
+                path_length = 0;
                 path_find_result = dijkstra_pathfind(grid, start, finish);
             }
             if (ImGui::Button("Greedy Best First Search")) {
                 grid.reset_path_finding();
+                nodes_visited = 0;
+                path_length = 0;
                 path_find_result = greedy_bfs_pathfind(grid, start, finish);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("A*")) {
+                grid.reset_path_finding();
+                nodes_visited = 0;
+                path_length = 0;
+                path_find_result = a_star_pathfind(grid, start, finish);
             }
 
             ImGui::Separator();
+            ImGui::Text("Pathfinding Results");
+            ImGui::Text("Nodes Visited: %d", nodes_visited);
+            ImGui::Text("Path Length: %d", path_length);
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
             ImGui::Text("Current Tool: %s", tool_to_string(tool));
             ImGui::End();
@@ -155,11 +175,13 @@ int main()
             auto current = pfr.visited.front();
             pfr.visited.pop_front();
             grid.set_tile(current.x, current.y, State::Visited);
+            nodes_visited++;
         }
         else if (!pfr.path.empty()) {
             auto current = pfr.path.back();
             pfr.path.pop_back();
             grid.set_tile(current.x, current.y, State::Path);
+            path_length++;
         }
 
         window.clear();

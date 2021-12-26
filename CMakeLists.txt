@@ -10,6 +10,7 @@ conan_basic_setup()
 #Set executable
 add_executable(${PROJECT_NAME}     
     src/main.cpp
+    src/AStar.cpp
     src/BreadthFirstSearch.cpp
     src/Dijkstra.cpp
     src/GreedyBreadthFirstSearch.cpp
