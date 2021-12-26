@@ -1,4 +1,4 @@
-#include "Gridmap.h"
+#include "Grid.h"
 
 State Grid::get_tile(int x, int y) const
 {

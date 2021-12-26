@@ -125,6 +125,7 @@ int main()
             }
 
             if (ImGui::Button("Do BFS Path Find")) {
+                grid.reset_path_finding();
                 path_find_result = bfs_pathfind(grid, start, finish);
             }
 
