@@ -29,17 +29,13 @@ const char* tool_to_string(Tool tool)
 
 int main()
 {
-    sf::RenderWindow window({1600, 900}, "Pathfinding");
-    // window.setFramerateLimit(60);
+    sf::RenderWindow window({WIN_WIDTH, WIN_HEIGHT}, "Pathfinding");
+    window.setFramerateLimit(500);
     window.setKeyRepeatEnabled(false);
 
     ImGui::SFML::Init(window);
     ImGui::GetStyle().FrameRounding = 0;
     ImGui::GetStyle().WindowRounding = 0;
-
-    sf::RectangleShape shape({TILE, TILE});
-    shape.setOutlineColor(sf::Color::Black);
-    shape.setOutlineThickness(1);
 
     Tool tool = Tool::Wall;
     sf::Vector2i start = {-1, -1};
@@ -117,6 +113,7 @@ int main()
             ImGui::Text("Tool Select");
             if (ImGui::Button("Clear")) {
                 grid.grid.fill(State::Empty);
+                grid.reset_path_finding();
             }
             ImGui::SameLine();
             if (ImGui::Button("Start")) {
@@ -187,35 +184,7 @@ int main()
         window.clear();
 
         // Render the grid
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                shape.setPosition(x * TILE, y * TILE);
-                auto tile = grid.get_tile(x, y);
-                switch (tile) {
-                    case State::Empty:
-                        shape.setFillColor({155, 155, 155});
-                        break;
-                    case State::Blocked:
-                        shape.setFillColor(sf::Color::Black);
-                        break;
-                    case State::Visited:
-                        shape.setFillColor({0, 100, 200});
-                        break;
-                    case State::Path:
-                        shape.setFillColor(sf::Color::Green);
-                        break;
-                    case State::Start:
-                        shape.setFillColor(sf::Color::Red);
-                        break;
-                    case State::End:
-                        shape.setFillColor({255, 165, 25});
-                        break;
-                }
-
-                window.draw(shape);
-            }
-        }
-
+        grid.draw(window);
         ImGui::SFML::Render(window);
         window.display();
     }

@@ -1,10 +1,15 @@
 #pragma once
 
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <array>
 
-constexpr int TILE = 20;
-constexpr int WIDTH = 1600 / TILE;
-constexpr int HEIGHT = 900 / TILE;
+constexpr int WIN_WIDTH = 1600;
+constexpr int WIN_HEIGHT = 900;
+
+constexpr int TILE = 16;
+constexpr int WIDTH = WIN_WIDTH / TILE;
+constexpr int HEIGHT = WIN_HEIGHT / TILE;
 
 enum class State {
     Empty,
@@ -17,6 +22,10 @@ enum class State {
 
 struct Grid {
     std::array<State, WIDTH * HEIGHT> grid{State::Empty};
+    std::array<sf::Vertex, WIDTH * HEIGHT * 4> vertices;
+
+    Grid();
+    void draw(sf::RenderWindow& window);
 
     State get_tile(int x, int y) const;
 
