@@ -28,3 +28,6 @@ PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
 
 PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
                                  const sf::Vector2i& finish);
+
+PathFindResult greedy_bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
+                                   const sf::Vector2i& finish);

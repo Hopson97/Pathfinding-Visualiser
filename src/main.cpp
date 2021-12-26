@@ -139,6 +139,10 @@ int main()
                 grid.reset_path_finding();
                 path_find_result = dijkstra_pathfind(grid, start, finish);
             }
+            if (ImGui::Button("Greedy Best First Search")) {
+                grid.reset_path_finding();
+                path_find_result = greedy_bfs_pathfind(grid, start, finish);
+            }
 
             ImGui::Separator();
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
