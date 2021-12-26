@@ -111,27 +111,34 @@ int main()
         ImGui::SFML::Update(window, updateClock.restart());
 
         if (ImGui::Begin("Menu")) {
+            ImGui::Text("Tool Select");
             if (ImGui::Button("Clear")) {
                 grid.grid.fill(State::Empty);
             }
+            ImGui::SameLine();
             if (ImGui::Button("Start")) {
                 tool = Tool::Start;
             }
+            ImGui::SameLine();
             if (ImGui::Button("Finish")) {
                 tool = Tool::Finish;
             }
+            ImGui::SameLine();
             if (ImGui::Button("Wall")) {
                 tool = Tool::Wall;
             }
 
-            if (ImGui::Button("Do BFS Path Find")) {
+            ImGui::Separator();
+
+            ImGui::Text("Pathfinding Algorithm");
+            if (ImGui::Button("Breadth First Search")) {
                 grid.reset_path_finding();
                 path_find_result = bfs_pathfind(grid, start, finish);
             }
 
+            ImGui::Separator();
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
             ImGui::Text("Current Tool: %s", tool_to_string(tool));
-
             ImGui::End();
         }
 
