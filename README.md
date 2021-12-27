@@ -1,6 +1,11 @@
-# pathfinding_visualisor
+# Pathfinding Visualiser
 
-description here
+Pathfinding algorithm visualisation using C++ and SFML.
+
+So far it can show BFS, Greedy BFS, Dijkstra's, and A*.
+
+![Peek 2021-12-27 10-22](https://user-images.githubusercontent.com/13512660/147462469-f9c44f81-9b72-4545-a0cd-e0ad4dd229a3.gif)
+
 
 ### Windows (Visual Studio)
 
@@ -22,12 +27,10 @@ Finally, under `Linker > Input`, add OpenGL32.lib as an additional dependancy.
 
 ### Linux
 
-Requires conan w/ bincrafters and cmake.
+Requires conan and cmake.
 
 ```sh
 python3 -m pip install conan
-conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-conan remote update bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 ```
 
 To build, at the root of the project:
@@ -36,7 +39,7 @@ To build, at the root of the project:
 sh scripts/build.sh install
 ```
 
-The `install` argument is only needed for the first time compilation as this is what grabs the libraries from Conan
+The `install` argument is only needed for the first time compilation as this is what grabs the libraries from Conan, future builds can omit the `install` arg.
 
 To run, at the root of the project:
 
