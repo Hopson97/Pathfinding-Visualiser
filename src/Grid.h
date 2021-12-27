@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <array>
+#include <vector>
 
 constexpr int WIN_WIDTH = 1600;
 constexpr int WIN_HEIGHT = 900;
@@ -23,6 +24,7 @@ enum class State {
 struct Grid {
     std::array<State, WIDTH * HEIGHT> grid{State::Empty};
     std::array<sf::Vertex, WIDTH * HEIGHT * 4> vertices;
+    std::vector<sf::Vertex> grid_lines;
 
     Grid();
     void draw(sf::RenderWindow& window);

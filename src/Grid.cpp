@@ -32,15 +32,31 @@ void set_quad_colour(sf::Vertex* vertex_start, State state)
 
 Grid::Grid()
 {
+    // Create a grid of lines
+    sf::Color line_col = sf::Color::Black;
+    line_col.a = 100;
+
+    for (int y = 0; y < HEIGHT; y++) {
+        grid_lines.push_back({{0, y * TILE}, line_col});
+        grid_lines.push_back({{WIDTH * TILE, y * TILE}, line_col});
+    }
+
+    for (int x = 0; x < WIDTH; x++) {
+        grid_lines.push_back({{x * TILE, 0}, line_col});
+        grid_lines.push_back({{x * TILE, HEIGHT * TILE}, line_col});
+    }
+
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            auto vertex_index = (y * WIDTH + x) * 4;
-            vertices[vertex_index + 0].position = {x * TILE, y * TILE};
-            vertices[vertex_index + 1].position = {(x + 1) * TILE, y * TILE};
-            vertices[vertex_index + 2].position = {(x + 1) * TILE, (y + 1) * TILE};
-            vertices[vertex_index + 3].position = {x * TILE, (y + 1) * TILE};
+            float xf = static_cast<float>(x);
+            float yf = static_cast<float>(y);
+            sf::Vertex* v = &vertices[(y * WIDTH + x) * 4.0f];
+            v[0].position = {xf * TILE, yf * TILE};
+            v[1].position = {(xf + 1.0f) * TILE, yf * TILE};
+            v[2].position = {(xf + 1.0f) * TILE, (yf + 1.0f) * TILE};
+            v[3].position = {xf * TILE, (yf + 1.0f) * TILE};
 
-            set_quad_colour(&vertices[vertex_index], State::Empty);
+            set_quad_colour(&vertices[(y * WIDTH + x) * 4.0f], State::Empty);
         }
     }
 }
@@ -61,7 +77,7 @@ void Grid::set_tile(int x, int y, State state)
     }
 
     // prevent setting tile if it is a start or end tile being set to visisted
-    if (state == State::Visited &&
+    if ((state == State::Visited || state == State::Path) &&
         (grid[x + y * WIDTH] == State::Start || grid[x + y * WIDTH] == State::End)) {
         return;
     }
@@ -90,4 +106,5 @@ void Grid::reset_path_finding()
 void Grid::draw(sf::RenderWindow& window)
 {
     window.draw(vertices.data(), vertices.size(), sf::Quads);
+    window.draw(grid_lines.data(), grid_lines.size(), sf::Lines);
 }
