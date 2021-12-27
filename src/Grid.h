@@ -8,7 +8,7 @@
 constexpr int WIN_WIDTH = 1600;
 constexpr int WIN_HEIGHT = 900;
 
-constexpr int TILE = 5;
+constexpr int TILE = 15;
 constexpr int WIDTH = WIN_WIDTH / TILE;
 constexpr int HEIGHT = WIN_HEIGHT / TILE;
 

@@ -1,7 +1,9 @@
 #include "PathFindingAlgorithm.h"
 
 #include "Grid.h"
+#include <cassert>
 #include <cmath>
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 
@@ -35,7 +37,10 @@ PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
             if ((try_find(cost_so_far, next) && cost < cost_so_far[next]) ||
                 (!try_find(came_from, next) && grid.square_walkable(next))) {
                 cost_so_far[next] = cost;
-                result.visited.push_back(next);
+
+                if (!try_find(came_from, next)) {
+                    result.visited.push_back(next);
+                }
                 queue.push({next, cost + std::pow(heuristic(next, finish), pow)});
                 came_from[next] = current.pos;
             }

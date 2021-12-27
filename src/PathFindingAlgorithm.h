@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <deque>
+#include <iostream>
 #include <unordered_map>
 
 struct Grid;
@@ -12,6 +13,13 @@ struct Grid;
 constexpr int NEIGHBOURS = 4;
 const int X_OFFSET[] = {-1, 0, 1, 0, -1, 1, 1, -1};
 const int Y_OFFSET[] = {0, 1, 0, -1, 1, 1, -1, -1};
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& vec)
+{
+    os << "(" << vec.x << ", " << vec.y << ")";
+    return os;
+}
 
 struct HashVec2 {
     size_t operator()(const sf::Vector2i& v) const
