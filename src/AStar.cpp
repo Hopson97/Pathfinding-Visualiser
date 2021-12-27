@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
-                               const sf::Vector2i& finish, int num_neighbours)
+                               const sf::Vector2i& finish, int num_neighbours, int pow)
 {
     std::priority_queue<Node, std::vector<Node>, NodeCompare> queue;
     std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2> came_from;
@@ -36,7 +36,7 @@ PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
                 (!try_find(came_from, next) && grid.square_walkable(next))) {
                 cost_so_far[next] = cost;
                 result.visited.push_back(next);
-                queue.push({next, cost + heuristic(next, finish)});
+                queue.push({next, cost + (int)std::pow(heuristic(next, finish), pow)});
                 came_from[next] = current.pos;
             }
             if (next == finish) {

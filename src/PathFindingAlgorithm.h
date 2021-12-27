@@ -82,4 +82,4 @@ PathFindResult greedy_bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
                                    const sf::Vector2i& finish, int neighbour_count);
 
 PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
-                               const sf::Vector2i& finish, int neighbour_count);
+                               const sf::Vector2i& finish, int neighbour_count, int pow);

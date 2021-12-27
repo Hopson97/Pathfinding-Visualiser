@@ -50,6 +50,8 @@ int main()
     int nodes_visited = 0;
     int path_length = 0;
 
+    int a_star_pow = 1;
+
     Grid grid;
     sf::Clock updateClock;
     while (window.isOpen()) {
@@ -101,9 +103,16 @@ int main()
         }
 
         if (tool == Tool::Wall && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            grid.set_tile(sf::Mouse::getPosition(window).x / TILE,
-                          sf::Mouse::getPosition(window).y / TILE, State::Blocked);
+            int x = sf::Mouse::getPosition(window).x / TILE;
+            int y = sf::Mouse::getPosition(window).y / TILE;
+
+            for (int yo = 0; yo < 2; yo++) {
+                for (int xo = 0; xo < 2; xo++) {
+                    grid.set_tile(x + xo, y + yo, State::Blocked);
+                }
+            }
         }
+
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
             grid.set_tile(sf::Mouse::getPosition(window).x / TILE,
                           sf::Mouse::getPosition(window).y / TILE, State::Empty);
@@ -158,10 +167,12 @@ int main()
                 grid.reset_path_finding();
                 nodes_visited = 0;
                 path_length = 0;
-                path_find_result = a_star_pathfind(grid, start, finish, num_neighbours);
+                path_find_result =
+                    a_star_pathfind(grid, start, finish, num_neighbours, a_star_pow);
             }
 
             ImGui::SliderInt("Neighbours?", &num_neighbours, 4, 8);
+            ImGui::SliderInt("A* pow?", &a_star_pow, 1, 10);
 
             ImGui::Separator();
             ImGui::Text("Pathfinding Results");
