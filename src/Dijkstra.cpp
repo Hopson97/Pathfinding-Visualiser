@@ -53,10 +53,6 @@ PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
         return result;
     }
 
-    auto current = finish;
-    while (start != current) {
-        result.path.push_back(current);
-        current = came_from.at(current);
-    }
+    result.path = make_path(start, finish, came_from);
     return result;
 }

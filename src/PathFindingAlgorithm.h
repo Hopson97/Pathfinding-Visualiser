@@ -44,6 +44,28 @@ inline int heuristic(const sf::Vector2i& start, const sf::Vector2i& end)
     return dx + dy;
 }
 
+/**
+ * @brief Constructs a path from the start to the end by back-tracking through the
+ * searched nodes.
+ *
+ * @param start The start position of the path
+ * @param goal The end position of the path
+ * @param came_from Map of visited nodes to the previous node
+ * @return std::vector<sf::Vector2i> Path from goal to end (as it was back tracked)
+ */
+inline std::deque<sf::Vector2i>
+make_path(const sf::Vector2i& start, const sf::Vector2i& goal,
+          std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2>& came_from)
+{
+    std::deque<sf::Vector2i> path;
+    auto current = goal;
+    while (start != current) {
+        path.push_back(current);
+        current = came_from.at(current);
+    }
+    return path;
+}
+
 PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
                             const sf::Vector2i& finish, int neighbour_count);
 
