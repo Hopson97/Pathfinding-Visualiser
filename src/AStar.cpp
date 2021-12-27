@@ -41,7 +41,9 @@ PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
                 if (!try_find(came_from, next)) {
                     result.visited.push_back(next);
                 }
-                queue.push({next, cost + std::pow(heuristic(next, finish), pow)});
+                double h = heuristic(next, finish);
+                h *= (1.0 + 1.0 / 1000.0);
+                queue.push({next, cost + std::pow(h, pow)});
                 came_from[next] = current.pos;
             }
             if (next == finish) {

@@ -49,7 +49,7 @@ inline double heuristic(const sf::Vector2i& start, const sf::Vector2i& end)
 {
     int dx = abs(start.x - end.x);
     int dy = abs(start.y - end.y);
-    return dx + dy;
+    return (dx + dy);
 }
 
 /**
