@@ -27,7 +27,7 @@ struct PathFindResult {
 
 struct Node {
     sf::Vector2i pos;
-    int cost;
+    double cost;
 };
 
 struct NodeCompare {
@@ -37,7 +37,7 @@ struct NodeCompare {
     }
 };
 
-inline int heuristic(const sf::Vector2i& start, const sf::Vector2i& end)
+inline double heuristic(const sf::Vector2i& start, const sf::Vector2i& end)
 {
     int dx = abs(start.x - end.x);
     int dy = abs(start.y - end.y);

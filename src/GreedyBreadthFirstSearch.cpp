@@ -31,7 +31,7 @@ PathFindResult greedy_bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
             if (!try_find(came_from, next) && grid.square_walkable(next)) {
                 result.visited.push_back(next);
 
-                int cost = heuristic(next, finish);
+                double cost = heuristic(next, finish);
                 queue.push({next, cost});
                 came_from[next] = current.pos;
             }

@@ -9,7 +9,7 @@ PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
 {
     std::priority_queue<Node, std::vector<Node>, NodeCompare> queue;
     std::unordered_map<sf::Vector2i, sf::Vector2i, HashVec2> came_from;
-    std::unordered_map<sf::Vector2i, int, HashVec2> cost_so_far;
+    std::unordered_map<sf::Vector2i, double, HashVec2> cost_so_far;
 
     cost_so_far[start] = 0;
 
@@ -30,7 +30,7 @@ PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
         }
         for (int i = 0; i < num_neighbours; i++) {
             auto next = current.pos + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
-            int cost = cost_so_far[current.pos] + 1;
+            double cost = cost_so_far[current.pos] + 1.0;
             if ((try_find(cost_so_far, next) && cost < cost_so_far[next]) ||
                 (!try_find(came_from, next) && grid.square_walkable(next))) {
                 cost_so_far[next] = cost;
