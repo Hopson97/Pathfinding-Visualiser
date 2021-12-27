@@ -30,7 +30,7 @@ const char* tool_to_string(Tool tool)
 int main()
 {
     sf::RenderWindow window({WIN_WIDTH, WIN_HEIGHT}, "Pathfinding");
-    window.setFramerateLimit(500);
+    // window.setFramerateLimit(500);
     window.setKeyRepeatEnabled(false);
 
     ImGui::SFML::Init(window);
