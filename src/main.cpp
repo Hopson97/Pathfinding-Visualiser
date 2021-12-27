@@ -45,6 +45,8 @@ int main()
 
     PathFindResult path_find_result;
 
+    int num_neighbours = NEIGHBOURS;
+
     int nodes_visited = 0;
     int path_length = 0;
 
@@ -135,28 +137,31 @@ int main()
                 grid.reset_path_finding();
                 nodes_visited = 0;
                 path_length = 0;
-                path_find_result = bfs_pathfind(grid, start, finish);
+                path_find_result = bfs_pathfind(grid, start, finish, num_neighbours);
             }
             ImGui::SameLine();
             if (ImGui::Button("Dijkstra's")) {
                 grid.reset_path_finding();
                 nodes_visited = 0;
                 path_length = 0;
-                path_find_result = dijkstra_pathfind(grid, start, finish);
+                path_find_result = dijkstra_pathfind(grid, start, finish, num_neighbours);
             }
             if (ImGui::Button("Greedy Best First Search")) {
                 grid.reset_path_finding();
                 nodes_visited = 0;
                 path_length = 0;
-                path_find_result = greedy_bfs_pathfind(grid, start, finish);
+                path_find_result =
+                    greedy_bfs_pathfind(grid, start, finish, num_neighbours);
             }
             ImGui::SameLine();
             if (ImGui::Button("A*")) {
                 grid.reset_path_finding();
                 nodes_visited = 0;
                 path_length = 0;
-                path_find_result = a_star_pathfind(grid, start, finish);
+                path_find_result = a_star_pathfind(grid, start, finish, num_neighbours);
             }
+
+            ImGui::SliderInt("Neighbours?", &num_neighbours, 4, 8);
 
             ImGui::Separator();
             ImGui::Text("Pathfinding Results");

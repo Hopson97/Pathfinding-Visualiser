@@ -9,8 +9,9 @@
 
 struct Grid;
 
-const int X_OFFSET[] = {-1, 0, 1, 0};
-const int Y_OFFSET[] = {0, 1, 0, -1};
+constexpr int NEIGHBOURS = 4;
+const int X_OFFSET[] = {-1, 0, 1, 0, -1, 1, 1, -1};
+const int Y_OFFSET[] = {0, 1, 0, -1, 1, 1, -1, -1};
 
 struct HashVec2 {
     size_t operator()(const sf::Vector2i& v) const
@@ -44,13 +45,13 @@ inline int heuristic(const sf::Vector2i& start, const sf::Vector2i& end)
 }
 
 PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
-                            const sf::Vector2i& finish);
+                            const sf::Vector2i& finish, int neighbour_count);
 
 PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
-                                 const sf::Vector2i& finish);
+                                 const sf::Vector2i& finish, int neighbour_count);
 
 PathFindResult greedy_bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
-                                   const sf::Vector2i& finish);
+                                   const sf::Vector2i& finish, int neighbour_count);
 
 PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
-                               const sf::Vector2i& finish);
+                               const sf::Vector2i& finish, int neighbour_count);
