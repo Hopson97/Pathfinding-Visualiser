@@ -28,9 +28,7 @@ PathFindResult greedy_bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
         }
         for (int i = 0; i < num_neighbours; i++) {
             auto next = current.pos + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
-            if (came_from.find(next) == came_from.end() &&
-                (grid.get_tile(next.x, next.y) == State::Empty ||
-                 grid.get_tile(next.x, next.y) == State::End)) {
+            if (!try_find(came_from, next) && grid.square_walkable(next)) {
                 result.visited.push_back(next);
 
                 int cost = heuristic(next, finish);

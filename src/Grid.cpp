@@ -103,6 +103,12 @@ void Grid::reset_path_finding()
     }
 }
 
+bool Grid::square_walkable(const sf::Vector2i& pos) const
+{
+    auto state = get_tile(pos.x, pos.y);
+    return state == State::Empty || state == State::End;
+}
+
 void Grid::draw(sf::RenderWindow& window)
 {
     window.draw(vertices.data(), vertices.size(), sf::Quads);

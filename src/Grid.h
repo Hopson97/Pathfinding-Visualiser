@@ -34,4 +34,6 @@ struct Grid {
     void set_tile(int x, int y, State state);
 
     void reset_path_finding();
+
+    bool square_walkable(const sf::Vector2i& pos) const;
 };

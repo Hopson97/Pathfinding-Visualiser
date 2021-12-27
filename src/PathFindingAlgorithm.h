@@ -66,6 +66,12 @@ make_path(const sf::Vector2i& start, const sf::Vector2i& goal,
     return path;
 }
 
+template <typename Map, typename Key>
+bool try_find(const Map& map, const Key& key)
+{
+    return map.find(key) != map.end();
+}
+
 PathFindResult bfs_pathfind(const Grid& grid, const sf::Vector2i& start,
                             const sf::Vector2i& finish, int neighbour_count);
 

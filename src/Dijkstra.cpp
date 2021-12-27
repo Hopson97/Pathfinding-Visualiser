@@ -31,12 +31,8 @@ PathFindResult dijkstra_pathfind(const Grid& grid, const sf::Vector2i& start,
         for (int i = 0; i < num_neighbours; i++) {
             auto next = current.pos + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
             int cost = cost_so_far[current.pos] + 1;
-            if (((cost_so_far.find(next) != cost_so_far.end() &&
-                  cost < cost_so_far[next]) ||
-                 (came_from.find(next) == came_from.end())) &&
-                (grid.get_tile(next.x, next.y) == State::Empty ||
-                 grid.get_tile(next.x, next.y) == State::End)) {
-
+            if ((try_find(cost_so_far, next) && cost < cost_so_far[next]) ||
+                (!try_find(came_from, next) && grid.square_walkable(next))) {
                 cost_so_far[next] = cost;
                 result.visited.push_back(next);
                 queue.push({next, cost});
