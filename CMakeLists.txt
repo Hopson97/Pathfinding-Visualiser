@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 #Set up project
-project(pathfinding_visualisor VERSION 1.0)
+project(pathfinding_visualiser VERSION 1.0)
 
 include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
 conan_basic_setup()

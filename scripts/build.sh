@@ -19,17 +19,17 @@ target_debug() {
 # Create folder for distribution
 if [ "$1" = "release" ]
 then
-    if [ -d "$pathfinding_visualisor " ]
+    if [ -d "$pathfinding_visualiser " ]
     then
-        rm -rf -d pathfinding_visualisor 
+        rm -rf -d pathfinding_visualiser 
     fi
 
-    mkdir -p pathfinding_visualisor 
+    mkdir -p pathfinding_visualiser 
 fi
 
 # Creates the folder for the buildaries
-mkdir -p pathfinding_visualisor
-mkdir -p pathfinding_visualisor/Data
+mkdir -p pathfinding_visualiser
+mkdir -p pathfinding_visualiser/Data
 mkdir -p build
 mkdir -p build/release
 mkdir -p build/debug
@@ -44,9 +44,9 @@ fi
 if [ "$1" = "release" ]
 then
     target_release
-    cp build/release/bin/pathfinding_visualisor  pathfinding_visualisor/pathfinding_visualisor 
+    cp build/release/bin/pathfinding_visualiser  pathfinding_visualiser/pathfinding_visualiser 
 else
     target_debug
 fi
 
-cp -R data pathfinding_visualisor/
+cp -R data pathfinding_visualiser/
