@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 #Set up project
 project(pathfinding_visualiser VERSION 1.0)
 
-include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 
@@ -35,12 +35,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 #Find libraries
 find_package(Threads)
-add_subdirectory(deps/imgui_sfml)
-target_include_directories(${PROJECT_NAME} PRIVATE deps)
 
 #Finally
-target_link_libraries(${PROJECT_NAME} 
+conan_target_link_libraries(${PROJECT_NAME} 
     Threads::Threads 
-    ${CONAN_LIBS}
-	imgui_sfml
 )
