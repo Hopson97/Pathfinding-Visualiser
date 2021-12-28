@@ -36,4 +36,8 @@ struct Grid {
     void reset_path_finding();
 
     bool square_walkable(const sf::Vector2i& pos) const;
+
+    void generate_random_map(int obstacle_chance);
+
+    void clear_grid();
 };

@@ -29,6 +29,7 @@ const char* tool_to_string(Tool tool)
 
 int main()
 {
+    srand(time(0));
     sf::RenderWindow window({WIN_WIDTH, WIN_HEIGHT}, "Pathfinding");
     // window.setFramerateLimit(500);
     window.setKeyRepeatEnabled(false);
@@ -51,6 +52,8 @@ int main()
     int path_length = 0;
 
     int a_star_pow = 1;
+
+    int map_obstacles = 0;
 
     Grid grid;
     sf::Clock updateClock;
@@ -121,11 +124,9 @@ int main()
         ImGui::SFML::Update(window, updateClock.restart());
 
         if (ImGui::Begin("Menu")) {
+
             ImGui::Text("Tool Select");
-            if (ImGui::Button("Clear")) {
-                grid.grid.fill(State::Empty);
-                grid.reset_path_finding();
-            }
+
             ImGui::SameLine();
             if (ImGui::Button("Start")) {
                 tool = Tool::Start;
@@ -140,7 +141,19 @@ int main()
             }
 
             ImGui::Separator();
+            ImGui::Text("Map Options");
 
+            if (ImGui::Button("Clear")) {
+                grid.grid.fill(State::Empty);
+                grid.reset_path_finding();
+            }
+
+            ImGui::SliderInt("Map Obstacles", &map_obstacles, 0, 100);
+            if (ImGui::Button("Generate")) {
+                grid.generate_random_map(map_obstacles);
+            }
+
+            ImGui::Separator();
             ImGui::Text("Pathfinding Algorithm");
             if (ImGui::Button("Breadth First Search")) {
                 grid.reset_path_finding();

@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include <iostream>
 
 void set_quad_colour(sf::Vertex* vertex_start, State state)
 {
@@ -107,6 +108,24 @@ bool Grid::square_walkable(const sf::Vector2i& pos) const
 {
     auto state = get_tile(pos.x, pos.y);
     return state == State::Empty || state == State::End;
+}
+
+void Grid::generate_random_map(int obstacle_chance)
+{
+    clear_grid();
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (rand() % 100 < obstacle_chance) {
+                set_tile(x, y, State::Blocked);
+            }
+        }
+    }
+}
+
+void Grid::clear_grid()
+{
+    grid.fill(State::Empty);
+    reset_path_finding();
 }
 
 void Grid::draw(sf::RenderWindow& window)
