@@ -8,7 +8,7 @@
 constexpr int WIN_WIDTH = 1600;
 constexpr int WIN_HEIGHT = 900;
 
-constexpr int TILE = 15;
+constexpr int TILE = 10;
 constexpr int WIDTH = WIN_WIDTH / TILE;
 constexpr int HEIGHT = WIN_HEIGHT / TILE;
 
@@ -40,4 +40,7 @@ struct Grid {
     void generate_random_map(int obstacle_chance);
 
     void clear_grid();
+
+    void load_grid();
+    void save_grid();
 };

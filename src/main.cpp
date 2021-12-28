@@ -56,6 +56,7 @@ int main()
     int map_obstacles = 0;
 
     Grid grid;
+    grid.load_grid();
     sf::Clock updateClock;
     while (window.isOpen()) {
         sf::Event e;
@@ -217,4 +218,6 @@ int main()
         ImGui::SFML::Render(window);
         window.display();
     }
+
+    grid.save_grid();
 }

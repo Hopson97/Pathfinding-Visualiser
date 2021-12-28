@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include <fstream>
 #include <iostream>
 
 void set_quad_colour(sf::Vertex* vertex_start, State state)
@@ -126,6 +127,49 @@ void Grid::clear_grid()
 {
     grid.fill(State::Empty);
     reset_path_finding();
+}
+
+void Grid::load_grid()
+{
+    std::ifstream file("grid.txt");
+    if (!file.is_open()) {
+        return;
+    }
+
+    clear_grid();
+
+    std::string line;
+    std::getline(file, line);
+    int x = 0;
+    int y = 0;
+    for (auto c : line) {
+        auto tile = static_cast<State>(c - '0');
+
+        set_tile(x, y, tile);
+        x++;
+        if (x >= WIDTH) {
+            x = 0;
+            y++;
+        }
+    }
+
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            char c;
+            file >> c;
+            if (c == '1') {
+                set_tile(x, y, State::Blocked);
+            }
+        }
+    }
+}
+
+void Grid::save_grid()
+{
+    std::ofstream file("grid.txt");
+    for (auto& tile : grid) {
+        file << (tile == State::Blocked ? '1' : '0');
+    }
 }
 
 void Grid::draw(sf::RenderWindow& window)
