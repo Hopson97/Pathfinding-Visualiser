@@ -1,5 +1,5 @@
 [requires]
-sfml/2.5.1
+imgui-sfml/2.3@bincrafters/stable
 
 [options]
 
