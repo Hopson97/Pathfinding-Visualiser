@@ -27,21 +27,31 @@ Finally, under `Linker > Input`, add OpenGL32.lib as an additional dependancy.
 
 ### Linux
 
-Requires conan and cmake.
+Requires conan w/ bincrafters and cmake.
 
 ```sh
+sudo apt install cmake
 python3 -m pip install conan
+conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/conan
 ```
 
 To build, at the root of the project:
 
-```
-mkdir build && cd build
-conan install .. --build missing
-cmake .. -G "Unix Makefiles"
-cmake .. --config Release # or Debug
+```sh
+sh scripts/build.sh install
 ```
 
-The application will be built inside build/bin
+The `install` argument is only needed for the first time compilation as this is what grabs the libraries from Conan, future builds can omit the `install` arg.
 
-[]: https://www.sfml-dev.org/download/sfml/2.5.1/
+To run, at the root of the project:
+
+```sh
+sh scripts/run.sh
+```
+
+To build and run in release mode, simply add the `release` suffix:
+
+```sh
+sh scripts/build.sh release
+sh scripts/run.sh release
+```
