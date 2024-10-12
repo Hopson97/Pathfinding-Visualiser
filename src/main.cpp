@@ -1,8 +1,8 @@
-#include "imgui.h"
-#include "imgui-SFML.h"
 #include "Keyboard.h"
+#include "imgui.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <imgui-SFML/imgui-SFML.h>
 #include <numeric>
 
 #include "Grid.h"
@@ -12,6 +12,7 @@ enum class Tool {
     Start,
     Finish,
     Wall,
+    Expensive,
 };
 
 const char* tool_to_string(Tool tool)
@@ -23,14 +24,17 @@ const char* tool_to_string(Tool tool)
             return "Finish";
         case Tool::Wall:
             return "Wall";
+        case Tool::Expensive:
+            return "Wall";
     }
     return "";
 }
 
 int main()
 {
-    srand(time(0));
+    //srand(time(0));
     sf::RenderWindow window({WIN_WIDTH, WIN_HEIGHT}, "Pathfinding");
+    window.setVerticalSyncEnabled(true);
     // window.setFramerateLimit(500);
     window.setKeyRepeatEnabled(false);
 
@@ -116,6 +120,16 @@ int main()
                 }
             }
         }
+        else if (tool == Tool::Expensive && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            int x = sf::Mouse::getPosition(window).x / TILE;
+            int y = sf::Mouse::getPosition(window).y / TILE;
+
+            for (int yo = 0; yo < 2; yo++) {
+                for (int xo = 0; xo < 2; xo++) {
+                    grid.set_tile(x + xo, y + yo, State::Expensive);
+                }
+            }
+        }
 
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
             grid.set_tile(sf::Mouse::getPosition(window).x / TILE,
@@ -140,13 +154,16 @@ int main()
             if (ImGui::Button("Wall")) {
                 tool = Tool::Wall;
             }
+    
+            if (ImGui::Button("Expensive")) {
+                tool = Tool::Expensive;
+            }
 
             ImGui::Separator();
             ImGui::Text("Map Options");
 
             if (ImGui::Button("Clear")) {
-                grid.grid.fill(State::Empty);
-                grid.reset_path_finding();
+                grid.clear_grid();
             }
 
             ImGui::SliderInt("Map Obstacles", &map_obstacles, 0, 100);
@@ -198,17 +215,20 @@ int main()
         }
 
         auto& pfr = path_find_result;
-        if (!pfr.visited.empty()) {
-            auto current = pfr.visited.front();
-            pfr.visited.pop_front();
-            grid.set_tile(current.x, current.y, State::Visited);
-            nodes_visited++;
-        }
-        else if (!pfr.path.empty()) {
-            auto current = pfr.path.back();
-            pfr.path.pop_back();
-            grid.set_tile(current.x, current.y, State::Path);
-            path_length++;
+        for (int i = 0; i < 10; i++) {
+
+            if (!pfr.visited.empty()) {
+                auto current = pfr.visited.front();
+                pfr.visited.pop_front();
+                grid.set_tile(current.x, current.y, State::Visited);
+                nodes_visited++;
+            }
+            else if (!pfr.path.empty()) {
+                auto current = pfr.path.back();
+                pfr.path.pop_back();
+                grid.set_tile(current.x, current.y, State::Path);
+                path_length++;
+            }
         }
 
         window.clear();
