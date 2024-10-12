@@ -15,6 +15,7 @@ constexpr int HEIGHT = WIN_HEIGHT / TILE;
 enum class State {
     Empty,
     Blocked,
+    Expensive,
     Visited,
     Path,
     Start,
@@ -22,8 +23,8 @@ enum class State {
 };
 
 struct Grid {
-    std::array<State, WIDTH * HEIGHT> grid{State::Empty};
-    std::array<sf::Vertex, WIDTH * HEIGHT * 4> vertices;
+    std::vector<State> grid{State::Empty};
+    std::vector<sf::Vertex> vertices;
     std::vector<sf::Vertex> grid_lines;
 
     Grid();
@@ -36,6 +37,7 @@ struct Grid {
     void reset_path_finding();
 
     bool square_walkable(const sf::Vector2i& pos) const;
+    int cost(const sf::Vector2i& pos) const;
 
     void generate_random_map(int obstacle_chance);
 

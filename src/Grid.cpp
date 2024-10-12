@@ -15,6 +15,9 @@ void set_quad_colour(sf::Vertex* vertex_start, State state)
         case State::Visited:
             colour = {0, 100, 200};
             break;
+        case State::Expensive:
+            colour = {100, 100, 200};
+            break;
         case State::Path:
             colour = sf::Color::Green;
             break;
@@ -33,19 +36,22 @@ void set_quad_colour(sf::Vertex* vertex_start, State state)
 }
 
 Grid::Grid()
+    : grid(WIDTH * HEIGHT)
+    , vertices(WIDTH * HEIGHT * 4)
 {
+    std::fill(grid.begin(), grid.end(), State::Empty);
     // Create a grid of lines
     sf::Color line_col = sf::Color::Black;
     line_col.a = 100;
 
     for (int y = 0; y < HEIGHT; y++) {
-        grid_lines.push_back({{0, y * TILE}, line_col});
-        grid_lines.push_back({{WIDTH * TILE, y * TILE}, line_col});
+        grid_lines.push_back({{0, y * (float)TILE}, line_col});
+        grid_lines.push_back({{WIDTH * TILE, y * (float)TILE}, line_col});
     }
 
     for (int x = 0; x < WIDTH; x++) {
-        grid_lines.push_back({{x * TILE, 0}, line_col});
-        grid_lines.push_back({{x * TILE, HEIGHT * TILE}, line_col});
+        grid_lines.push_back({{x * (float)TILE, 0}, line_col});
+        grid_lines.push_back({{x * (float)TILE, HEIGHT * (float)TILE}, line_col});
     }
 
     for (int y = 0; y < HEIGHT; y++) {
@@ -108,7 +114,21 @@ void Grid::reset_path_finding()
 bool Grid::square_walkable(const sf::Vector2i& pos) const
 {
     auto state = get_tile(pos.x, pos.y);
-    return state == State::Empty || state == State::End;
+    return state == State::Empty || state == State::End || state == State::Expensive;
+}
+
+int Grid::cost(const sf::Vector2i& pos) const { 
+    auto state = get_tile(pos.x, pos.y); 
+    
+    if (state == State::Empty) {
+        return 10;
+    }
+    else if (state == State::Expensive)
+    {
+        return 5;
+    }
+    return 100;
+
 }
 
 void Grid::generate_random_map(int obstacle_chance)
@@ -125,7 +145,7 @@ void Grid::generate_random_map(int obstacle_chance)
 
 void Grid::clear_grid()
 {
-    grid.fill(State::Empty);
+    std::fill(grid.begin(), grid.end(), State::Empty);
     reset_path_finding();
 }
 

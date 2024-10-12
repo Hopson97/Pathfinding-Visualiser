@@ -33,7 +33,7 @@ PathFindResult a_star_pathfind(const Grid& grid, const sf::Vector2i& start,
         }
         for (int i = 0; i < num_neighbours; i++) {
             auto next = current.pos + sf::Vector2i(X_OFFSET[i], Y_OFFSET[i]);
-            double cost = cost_so_far[current.pos] + 1.0;
+            double cost = cost_so_far[current.pos] +  grid.cost(next);
             if ((try_find(cost_so_far, next) && cost < cost_so_far[next]) ||
                 (!try_find(came_from, next) && grid.square_walkable(next))) {
                 cost_so_far[next] = cost;
